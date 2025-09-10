@@ -1,0 +1,16 @@
+[package]
+name = "sdrmapper-rs"
+version = "0.1.0"
+edition = "2024"
+build = "build.rs"
+
+[dependencies]
+jni = "0.21.1"
+
+[build-dependencies]
+bindgen = "0.71.0"
+cmake = "0.1"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+path = "src/lib.rs"
