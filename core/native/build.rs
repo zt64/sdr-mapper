@@ -1,4 +1,4 @@
-use std::{env, fs, path::PathBuf, process::Command};
+use std::{env, fs, path::PathBuf, process::Command, path::MAIN_SEPARATOR};
 use cmake;
 
 fn main() {
@@ -32,11 +32,33 @@ fn main() {
     }
 }
 
+pub fn binary_output_directory() -> PathBuf {
+    let out_dir = env::var("OUT_DIR").unwrap();
+    let out_dir = out_dir.as_str();
+
+    let target = env::var("TARGET").unwrap();
+    let profile = env::var("PROFILE").unwrap();
+    let host = env::var("HOST").unwrap();
+    if target == host {
+        let separator = format!("target{}{}", MAIN_SEPARATOR, profile);
+        if let Some(idx) = out_dir.find(&separator) {
+            return PathBuf::from(String::from(&out_dir[..(idx + separator.len())]));
+        }
+    }
+
+    let separator = format!(
+        "target{}{}{}{}",
+        MAIN_SEPARATOR, target, MAIN_SEPARATOR, profile
+    );
+    let idx = out_dir.find(&separator).unwrap();
+    PathBuf::from(String::from(&out_dir[..(idx + separator.len())]))
+}
+
 fn generate_bindings() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let include_dir = out_dir.join("include");
-
     let libusb_header_path = include_dir.join("libusb/libusb.h");
+
     bindgen::Builder::default()
         .header(libusb_header_path.to_str().unwrap())
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
@@ -57,7 +79,7 @@ fn generate_bindings() {
 
 fn build_libusb(target_abi: &str) {
     let ndk_path = env::var("ANDROID_NDK_HOME").expect("ANDROID_NDK_HOME environment variable must be set");
-    let libusb_dir = env::current_dir().unwrap().join("libusb");
+    let libusb_dir = env::current_dir().unwrap().join("external/libusb");
 
     Command::new(format!("{}/ndk-build", ndk_path))
         .current_dir(libusb_dir.join("android/jni"))
@@ -83,7 +105,7 @@ fn build_libusb(target_abi: &str) {
     fs::copy(&libusb_path, &lib_dir.join("libusb1.0.so")).expect("Failed to copy libusb1.0.so");
     fs::copy(&libusb_path, &lib_dir.join("libusb-1.0.so")).expect("Failed to copy libusb-1.0.so");
 
-    fs::copy(&libusb_path, out_dir.join("libusb1.0.so")).expect("Failed to copy libusb1.0.so to OUT_DIR");
+    fs::copy(&libusb_path, binary_output_directory().join("libusb1.0.so")).expect("Failed to copy libusb1.0.so to OUT_DIR");
 
     println!("cargo:rustc-link-search=native={}", out_dir.display());
     println!("cargo:rustc-link-lib=dylib=usb1.0");
@@ -96,7 +118,7 @@ fn build_rtlsdrblog(target_abi: &str) {
     let include_dir = out_dir.join("include");
     let lib_dir = out_dir.join("lib");
 
-    let _dst = cmake::Config::new("rtl-sdr")
+    let _dst = cmake::Config::new("external/rtl-sdr")
         .define("CMAKE_TOOLCHAIN_FILE", format!("{}/build/cmake/android.toolchain.cmake", ndk_path))
         .define("ANDROID_ABI", target_abi)
         .define("ANDROID_ARM_NEON", "ON")
@@ -113,7 +135,7 @@ fn build_rtlsdrblog(target_abi: &str) {
 
     fs::copy(
         &lib_dir.join("librtlsdr.so"),
-        &out_dir.join("librtlsdr.so")
+        binary_output_directory().join("librtlsdr.so"),
     ).expect("Failed to copy librtlsdr.so to OUT_DIR");
 
     println!("cargo:rustc-link-search=native={}", lib_dir.display());

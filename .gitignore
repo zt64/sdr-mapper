@@ -3,5 +3,7 @@
 .kotlin/
 .gradle/
 build/
+debug/
+release/
 target/
 local.properties

@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        System.loadLibrary("sdrmapper_rs")
+        System.loadLibrary("sdrmapper")
 
         val filter = IntentFilter(ACTION_USB_PERMISSION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

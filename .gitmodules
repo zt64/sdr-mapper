@@ -1,6 +1,6 @@
-[submodule "core/native/rtl-sdr"]
-	path = core/native/rtl-sdr
+[submodule "core/native/external/rtl-sdr"]
+	path = core/native/external/rtl-sdr
 	url = git@github.com:AlexandreRouma/rtl-sdr.git
-[submodule "core/native/libusb"]
-	path = core/native/libusb
+[submodule "core/native/external/libusb"]
+	path = core/native/external/libusb
 	url = git@github.com:libusb/libusb.git
