@@ -8,7 +8,7 @@ build = "build.rs"
 jni = "0.21.1"
 
 [build-dependencies]
-bindgen = "0.71.0"
+bindgen = "0.72.0"
 cmake = "0.1"
 
 [lib]
