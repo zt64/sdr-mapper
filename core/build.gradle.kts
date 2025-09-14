@@ -18,7 +18,7 @@ cargo {
     packageDirectory = layout.projectDirectory.dir("native")
 
     builds.android {
-        dynamicLibraries.addAll("usb1.0", "rtlsdr")
+        dynamicLibraries.addAll("usb1.0", "rtlsdr", "airspy", "airspyhf")
     }
 }
 

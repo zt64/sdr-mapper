@@ -4,3 +4,15 @@
 [submodule "core/native/external/libusb"]
 	path = core/native/external/libusb
 	url = git@github.com:libusb/libusb.git
+[submodule "core/native/external/airspyhf"]
+	path = core/native/external/airspyhf
+	url = git@github.com:airspy/airspyhf.git
+[submodule "core/native/external/airspyone_host"]
+	path = core/native/external/airspyone_host
+	url = git@github.com:airspy/airspyone_host.git
+[submodule "core/native/external/hackrf"]
+	path = core/native/external/hackrf
+	url = git@github.com:greatscottgadgets/hackrf.git
+[submodule "core/native/external/fftw3"]
+	path = core/native/external/fftw3
+	url = https://github.com/FFTW/fftw3
